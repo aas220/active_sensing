@@ -83,8 +83,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
     unsigned int n = 0;
     unsigned int sensing_action;
     double active_sensing_time = 0;
-    Eigen::VectorXd observation;
-    Eigen::VectorXd task_action;
+    Eigen::VectorXd observation(1);
+    Eigen::VectorXd task_action(3);
     states_.push_back(init_state);
     std::chrono::high_resolution_clock::time_point active_sensing_start;
     std::chrono::high_resolution_clock::time_point active_sensing_finish;
