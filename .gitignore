@@ -2,3 +2,4 @@
 cmake-build-debug
 .gitold
 flann*
+.vscode
