@@ -283,7 +283,61 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
         // Otherwise, set sensing action to DO NOTHING.
         else
         {
+            
+            ros::NodeHandle n_h;
+            ros::Rate loop_rate(10);
+
             task_action = planner_.getTaskAction();
+
+            /*
+                code below use spin loops to set timer that enable synchronization
+            */
+
+            ROS_INFO("REST FOR A WHILE!!!!!!!!");
+            int counter_b = 0;
+            while(counter_b < 100){
+                counter_b++;
+                ros::spinOnce();
+            }
+            ROS_INFO("REST DONE");
+
+            /*
+                code above use spin loops to set timer that enable synchronization
+            */
+
+            /*
+                code below pub observation request to local
+            */
+
+            ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("updateelse", 1000);
+            ROS_INFO("get into while(ros::ok()) loop");
+            while (ros::ok())
+            {
+                int connections = update_pub.getNumSubscribers();
+                ROS_INFO("connected: %d", connections);
+                active_sensing_continuous::UpdateInfo msg;
+                msg.x = task_action(0);
+                msg.y = task_action(1);
+                msg.z = task_action(2);
+                ROS_INFO("update info has been loaded to msg");
+                if(connections > 0){
+                    int i = 0;
+                    while(i < 10){
+                        update_pub.publish(msg);
+                        i++;
+                        ros::spinOnce();
+                    }
+                ROS_INFO("published");
+                break;
+                }
+                loop_rate.sleep();
+            }
+            ROS_INFO("get out of while(ros::ok()) loop");
+
+            /*
+                code above pub observation request to local
+            */
+
             planner_.predictBelief(task_action);
             updateSimulator(task_action);
 
