@@ -104,21 +104,21 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
         if (n % (sensing_interval_ + 1) == 0)
         {
 
-	    /*
-                code below use spin loops to set timer that enable synchronization
-            */
+	        // /*
+            //     code below use spin loops to set timer that enable synchronization
+            // */
 
-            ROS_INFO("REST FOR A WHILE!!!!!!!!");
-            int counter_0 = 0;
-            while(counter_0 < 100){
-                counter_0++;
-                ros::spinOnce();
-            }
-            ROS_INFO("REST DONE");
+            // ROS_INFO("REST FOR A WHILE!!!!!!!!");
+            // int counter_0 = 0;
+            // while(counter_0 < 100){
+            //     counter_0++;
+            //     ros::spinOnce();
+            // }
+            // ROS_INFO("REST DONE");
 
-            /*
-                code above use spin loops to set timer that enable synchronization
-            */
+            // /*
+            //     code above use spin loops to set timer that enable synchronization
+            // */
 
             // Get sensing action.
             active_sensing_start = std::chrono::high_resolution_clock::now();
@@ -137,7 +137,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             ros::NodeHandle n_h;
             ros::Publisher sensing_action_pub = n_h.advertise<active_sensing_continuous::ReqObsrv>("req_obsrv", 1000);
             ros::Rate loop_rate(10);
-            ROS_INFO("get into while(ros::ok()) loop");
+            ROS_INFO("get into advertizing sensing_action loop");
             while (ros::ok())
             {
                 int connections = sensing_action_pub.getNumSubscribers();
@@ -157,7 +157,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 }
                 loop_rate.sleep();
             }
-            ROS_INFO("get out of while(ros::ok()) loop");
+            ROS_INFO("get out of advertizing sensing_action loop");
             sensing_action_pub.shutdown();
 
             /*
@@ -168,13 +168,13 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code below use spin loops to set timer that enable synchronization
             */
 
-            ROS_INFO("REST FOR A WHILE!!!!!!!!");
+            ROS_INFO("REST FOR A WHILE!!!!!!!! before recieving observation_back");
             int counter_a = 0;
-            while(counter_a < 100){
+            while(counter_a < 10){
                 counter_a++;
-                ros::spinOnce();
+                loop_rate.sleep();
             }
-            ROS_INFO("REST DONE");
+            ROS_INFO("1s REST DONE");
 
             /*
                 code above use spin loops to set timer that enable synchronization
@@ -188,7 +188,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             */
 
             ros::Subscriber sub = n_h.subscribe("obversation_back", 1000, observationBackCallback);
-            ROS_INFO("create a subber");
+            ROS_INFO("create a subber of observation_back");
 
             while(true){
                 ros::spinOnce();
@@ -202,6 +202,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             obversation_back_flag = 0;
             ROS_INFO("obversation_back_flag is %d", obversation_back_flag);
             observation(0) = observation_global;
+            ROS_INFO("obversation_back is %f", observation(0));
             sub.shutdown();
 
             /*
@@ -220,13 +221,13 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code below use spin loops to set timer that enable synchronization
             */
 
-            ROS_INFO("REST FOR A WHILE!!!!!!!!");
+            ROS_INFO("REST FOR A WHILE!!!!!!!! before advertizing update info");
             int counter_b = 0;
-            while(counter_b < 100){
+            while(counter_b < 10){
                 counter_b++;
-                ros::spinOnce();
+                loop_rate.sleep();
             }
-            ROS_INFO("REST DONE");
+            ROS_INFO("1s REST DONE");
 
             /*
                 code above use spin loops to set timer that enable synchronization
@@ -237,7 +238,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             */
 
             ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("update", 1000);
-            ROS_INFO("get into while(ros::ok()) loop");
+            ROS_INFO("get into update loop");
             while (ros::ok())
             {
                 int connections = update_pub.getNumSubscribers();
@@ -246,7 +247,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 msg.x = task_action(0);
                 msg.y = task_action(1);
                 msg.z = task_action(2);
-                ROS_INFO("update info has been loaded to msg");
+                ROS_INFO("update info has been loaded to msg: (%f, %f, %f)", task_action(0), task_action(1), task_action(2));
                 if(connections > 0){
                     int i = 0;
                     while(i < 10){
@@ -259,7 +260,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 }
                 loop_rate.sleep();
             }
-            ROS_INFO("get out of while(ros::ok()) loop");
+            ROS_INFO("get out of update loop");
             update_pub.shutdown();
 
             /*
@@ -296,13 +297,13 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code below use spin loops to set timer that enable synchronization
             */
 
-            ROS_INFO("REST FOR A WHILE!!!!!!!!");
+            ROS_INFO("REST FOR A WHILE!!!!!!!! before advertizing updateelse info");
             int counter_b = 0;
-            while(counter_b < 100){
+            while(counter_b < 10){
                 counter_b++;
-                ros::spinOnce();
+                loop_rate.sleep();
             }
-            ROS_INFO("REST DONE");
+            ROS_INFO("1s REST DONE");
 
             /*
                 code above use spin loops to set timer that enable synchronization
@@ -313,7 +314,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             */
 
             ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("updateelse", 1000);
-            ROS_INFO("get into while(ros::ok()) loop");
+            ROS_INFO("get into updateelse loop");
             while (ros::ok())
             {
                 int connections = update_pub.getNumSubscribers();
@@ -322,7 +323,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 msg.x = task_action(0);
                 msg.y = task_action(1);
                 msg.z = task_action(2);
-                ROS_INFO("update info has been loaded to msg");
+                ROS_INFO("update info has been loaded to msg: (%f, %f, %f)", task_action(0), task_action(1), task_action(2));
                 if(connections > 0){
                     int i = 0;
                     while(i < 10){
@@ -335,7 +336,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 }
                 loop_rate.sleep();
             }
-            ROS_INFO("get out of while(ros::ok()) loop");
+            ROS_INFO("get out of updateelse loop");
             update_pub.shutdown();
 
             /*
