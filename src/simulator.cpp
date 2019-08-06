@@ -158,6 +158,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 loop_rate.sleep();
             }
             ROS_INFO("get out of while(ros::ok()) loop");
+            sensing_action_pub.shutdown();
 
             /*
                 code above pub observation request to local
@@ -201,6 +202,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             obversation_back_flag = 0;
             ROS_INFO("obversation_back_flag is %d", obversation_back_flag);
             observation(0) = observation_global;
+            sub.shutdown();
 
             /*
                 code above create subber of observation
@@ -258,6 +260,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 loop_rate.sleep();
             }
             ROS_INFO("get out of while(ros::ok()) loop");
+            update_pub.shutdown();
 
             /*
                 code above pub observation request to local
@@ -333,6 +336,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 loop_rate.sleep();
             }
             ROS_INFO("get out of while(ros::ok()) loop");
+            update_pub.shutdown();
 
             /*
                 code above pub observation request to local
