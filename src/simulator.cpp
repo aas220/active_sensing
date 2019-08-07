@@ -135,7 +135,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             sensing_action_global = sensing_action;
 
             ros::NodeHandle n_h;
-            ros::Publisher sensing_action_pub = n_h.advertise<active_sensing_continuous::ReqObsrv>("req_obsrv", 1000);
+            ros::Publisher sensing_action_pub = n_h.advertise<active_sensing_continuous::ReqObsrv>("req_obsrv", 100000);
             ros::Rate loop_rate(10);
             ROS_INFO("get into advertizing sensing_action loop");
             while (ros::ok())
@@ -173,6 +173,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             while(counter_a < 10){
                 counter_a++;
                 loop_rate.sleep();
+                ros::spinOnce();
             }
             ROS_INFO("1s REST DONE");
 
@@ -187,7 +188,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code below create subber of observation
             */
 
-            ros::Subscriber sub = n_h.subscribe("obversation_back", 1000, observationBackCallback);
+            ros::Subscriber sub = n_h.subscribe("obversation_back", 100000, observationBackCallback);
             ROS_INFO("create a subber of observation_back");
 
             while(true){
@@ -226,6 +227,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             while(counter_b < 10){
                 counter_b++;
                 loop_rate.sleep();
+                ros::spinOnce();
             }
             ROS_INFO("1s REST DONE");
 
@@ -237,7 +239,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code below pub observation request to local
             */
 
-            ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("update", 1000);
+            ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("update", 100000);
             ROS_INFO("get into update loop");
             while (ros::ok())
             {
@@ -273,6 +275,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
 
             updateSimulator(sensing_action, observation, task_action);
 
+            ROS_INFO("simulator updated in first update branch");
+
             if (verbosity > 0)
             {
                 std::cout << "n = " << n << std::endl;
@@ -302,6 +306,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             while(counter_b < 10){
                 counter_b++;
                 loop_rate.sleep();
+                ros::spinOnce();
             }
             ROS_INFO("1s REST DONE");
 
@@ -313,7 +318,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code below pub observation request to local
             */
 
-            ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("updateelse", 1000);
+            ros::Publisher update_pub = n_h.advertise<active_sensing_continuous::UpdateInfo>("updateelse", 100000);
             ROS_INFO("get into updateelse loop");
             while (ros::ok())
             {
@@ -345,6 +350,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
 
             planner_.predictBelief(task_action);
             updateSimulator(task_action);
+
+            ROS_INFO("simulator updated in updateelse branch");
 
             if (verbosity > 0)
             {
