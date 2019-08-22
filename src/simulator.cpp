@@ -182,7 +182,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             */
            
             // Update the belief.
-            // observation = model_.sampleObservation(states_.back(), sensing_action);
+            // observation = 
+            model_.sampleObservation(states_.back(), sensing_action);
 
             /*
                 code below create subber of observation
