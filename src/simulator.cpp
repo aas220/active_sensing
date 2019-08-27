@@ -83,12 +83,35 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
     unsigned int n = 0;
     unsigned int sensing_action;
     double active_sensing_time = 0;
+    double observation_time = 0;
+    double updatebelief_time = 0;
+    double taskaction_time = 0;
+    double predictbelief_time = 0;
+
+    double avg_observation_time = 0;
+    double avg_updatebelief_time = 0;
+    double avg_taskaction_time = 0;
+    double avg_predictbelief_time = 0;
+
     Eigen::VectorXd observation(1);
     Eigen::VectorXd task_action(3);
     states_.push_back(init_state);
     std::chrono::high_resolution_clock::time_point active_sensing_start;
     std::chrono::high_resolution_clock::time_point active_sensing_finish;
+    std::chrono::high_resolution_clock::time_point observation_start;
+    std::chrono::high_resolution_clock::time_point observation_finish;
+    std::chrono::high_resolution_clock::time_point updatebelief_start;
+    std::chrono::high_resolution_clock::time_point updatebelief_finish;
+    std::chrono::high_resolution_clock::time_point taskaction_start;
+    std::chrono::high_resolution_clock::time_point taskaction_finish;
+    std::chrono::high_resolution_clock::time_point predictbelief_start;
+    std::chrono::high_resolution_clock::time_point predictbelief_finish;
+
     std::chrono::duration<double> active_sensing_elapsed_time;
+    std::chrono::duration<double> observation_elapsed_time;
+    std::chrono::duration<double> taskaction_elapsed_time;
+    std::chrono::duration<double> updatebelief_elapsed_time;
+    std::chrono::duration<double> predictbelief_elapsed_time;
 
     if (verbosity > 0)
         std::cout << "state = \n" << states_.back().transpose() << std::endl;
@@ -103,6 +126,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
         // If sensing is allowed in this step.
         if (n % (sensing_interval_ + 1) == 0)
         {
+
+            ros::Duration(0.2).sleep();
 
             // Get sensing action.
             active_sensing_start = std::chrono::high_resolution_clock::now();
@@ -132,7 +157,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 ROS_INFO("observe there: %d", sensing_action_global);
                 if(connections > 0){
                     int i = 0;
-                    while(i < 10){
+                    while(i < 100){
                         sensing_action_pub.publish(msg);
                         i++;
                         ros::spinOnce();
@@ -159,6 +184,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
 
             ros::Duration(0.6).sleep(); 
 
+            observation_start = std::chrono::high_resolution_clock::now();
+
             ros::Subscriber sub = n_h.subscribe("obversation_back", 100000, observationBackCallback);
             ROS_INFO("create a subber of observation_back");
 
@@ -177,6 +204,11 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             ROS_INFO("obversation_back is %f", observation(0));
             sub.shutdown();
 
+            observation_finish = std::chrono::high_resolution_clock::now();
+            observation_elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>> 
+                    (observation_finish - observation_start);
+            observation_time += observation_elapsed_time.count();
+
             /*
                 code above create subber of observation
             */
@@ -184,10 +216,24 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             //Eigen::IOFormat CommaInitFmt(4, 0, ", ", ", ", "", "", " << ", ";");
             //std::cout << "observation is " << observation.format(CommaInitFmt) << std::endl;
 
+            updatebelief_start = std::chrono::high_resolution_clock::now();
+
             planner_.updateBelief(sensing_action, observation);
 
+            updatebelief_finish = std::chrono::high_resolution_clock::now();
+            updatebelief_elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>> 
+                    (updatebelief_finish - updatebelief_start);
+            updatebelief_time += updatebelief_elapsed_time.count();
+
             // Predict the new belief.
+            taskaction_start = std::chrono::high_resolution_clock::now();
+
             task_action = planner_.getTaskAction();
+
+            taskaction_finish = std::chrono::high_resolution_clock::now();
+            taskaction_elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>> 
+                    (taskaction_finish - taskaction_start);
+            taskaction_time += taskaction_elapsed_time.count();
 
             /*
                 code below pub observation request to local
@@ -209,7 +255,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 ROS_INFO("update info has been loaded to msg: (%f, %f, %f)", task_action(0), task_action(1), task_action(2));
                 if(connections > 0){
                     int i = 0;
-                    while(i < 10){
+                    while(i < 100){
                         update_pub.publish(msg);
                         i++;
                         ros::spinOnce();
@@ -226,11 +272,18 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 code above pub observation request to local
             */
 
+            predictbelief_start = std::chrono::high_resolution_clock::now();
+
             planner_.predictBelief(task_action);
 
             //std::cout << "task_action is " << task_action.format(CommaInitFmt) << std::endl;
 
             updateSimulator(sensing_action, observation, task_action);
+
+            predictbelief_finish = std::chrono::high_resolution_clock::now();
+            predictbelief_elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>> 
+                    (predictbelief_finish - predictbelief_start);
+            predictbelief_time += predictbelief_elapsed_time.count();
 
             ROS_INFO("simulator updated in first update branch");
 
@@ -274,7 +327,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
                 ROS_INFO("update info has been loaded to msg: (%f, %f, %f)", task_action(0), task_action(1), task_action(2));
                 if(connections > 0){
                     int i = 0;
-                    while(i < 10){
+                    while(i < 100){
                         update_pub.publish(msg);
                         i++;
                         ros::spinOnce();
@@ -320,10 +373,28 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
 
     int num_sensing_steps = (n + 1) / (sensing_interval_ + 1);
 
-    if (num_sensing_steps > 0)
+    if (num_sensing_steps > 0){
         active_sensing_time_ = active_sensing_time / num_sensing_steps;
+        avg_observation_time = observation_time/num_sensing_steps;
+        observation_time_=avg_observation_time;
+        avg_taskaction_time = taskaction_time/num_sensing_steps;
+        taskaction_time_=avg_taskaction_time;
+        avg_updatebelief_time = updatebelief_time/num_sensing_steps;
+        updatebelief_time_=avg_updatebelief_time;
+        avg_predictbelief_time = predictbelief_time/num_sensing_steps;
+        predictbelief_time_=avg_predictbelief_time;
+    }
     else
+    {
         active_sensing_time_ = 0;
+    }
+
+    std::cout << "active sensing time = " << active_sensing_time_ << std::endl;
+    std::cout << "observation time = " << observation_time_ << std::endl;
+    std::cout << "update belief time = " << updatebelief_time_ << std::endl;
+    std::cout << "task action time = " << taskaction_time_ << std::endl;
+    std::cout << "predict belief time = " << predictbelief_time_ << std::endl;
+    
 }
 
 std::vector<Eigen::VectorXd> Simulator::getStates()
@@ -354,6 +425,26 @@ double Simulator::getCumulativeReward()
 double Simulator::getAverageActiveSensingTime()
 {
     return active_sensing_time_;
+}
+
+double Simulator::getAvgObservationTime()
+{
+    return observation_time_;
+}
+
+double Simulator::getAvgUpdatebeliefTime()
+{
+    return updatebelief_time_;
+}
+
+double Simulator::getAvgTaskactionTime()
+{
+    return taskaction_time_;
+}
+
+double Simulator::getAvgPredictbeliefTime()
+{
+    return predictbelief_time_;
 }
 
 void Simulator::publishState()

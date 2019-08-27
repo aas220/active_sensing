@@ -108,6 +108,10 @@ public:
      * @return The time the active sensing took (s).
      */
     double getAverageActiveSensingTime();
+    double getAvgObservationTime();
+    double getAvgUpdatebeliefTime();
+    double getAvgTaskactionTime();
+    double getAvgPredictbeliefTime();
 
     void publishState();
 
@@ -152,6 +156,11 @@ private:
      * \brief The cumulative active sensing time.
      */
     double active_sensing_time_;
+
+    double observation_time_;
+    double updatebelief_time_;
+    double taskaction_time_;
+    double predictbelief_time_;
 
     /**
      * \brief This is the number of steps between two consecutive sensing actions.
