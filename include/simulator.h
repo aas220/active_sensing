@@ -11,6 +11,7 @@
 #include <tf/transform_broadcaster.h>
 #include "model.h"
 #include "planner.h"
+//int globalcheckflag=0;
 
 
 class Simulator {
@@ -110,10 +111,17 @@ public:
     double getAverageActiveSensingTime();
     double getAvgObservationTime();
     double getAvgUpdatebeliefTime();
+    double getAvgTotalUpdatebeliefTime();
     double getAvgTaskactionTime();
     double getAvgPredictbeliefTime();
+    double getAvgTotalPredictbeliefTime();
+
+
+    //void pulishReqobsrv(ROS::NodeHandle nodehandle);
 
     void publishState();
+
+    //ros::NodeHandle n_h;
 
 private:
 
@@ -157,14 +165,16 @@ private:
      */
     double active_sensing_time_;
 
-    double observation_time_;
-    double updatebelief_time_;
-    double taskaction_time_;
-    double predictbelief_time_;
-
     /**
      * \brief This is the number of steps between two consecutive sensing actions.
      */
+
+    double observation_time_;
+    double updatebelief_time_;
+    double total_updatebelief_time_;
+    double taskaction_time_;
+    double predictbelief_time_;
+    double total_predictbelief_time_;
     unsigned int sensing_interval_;
 
     ros::NodeHandle *node_handle_;
