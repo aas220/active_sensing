@@ -7,7 +7,7 @@
 #include <iostream>
 #include <tf/tf.h>
 #include"simulator.h"
-#include "/var/lib/jenkins/remote_ws/active_sensing/lib/random/include/rng.h"
+#include "/var/lib/jenkins/remote_ws/src/active_sensing/lib/random/include/rng.h"
 
 Rectangle::Rectangle(double dimension1, double dimension2) :
     dimension1_(dimension1),
