@@ -45,7 +45,6 @@ add_message_files(
   ObsrvBack.msg
   ReqObsrv.msg
   UpdateInfo.msg
-  CT.msg
 )
 add_service_files(
   FILES

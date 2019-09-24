@@ -4,12 +4,8 @@
 
 #include <visualization_msgs/MarkerArray.h>
 #include "simulator.h"
-#include "active_sensing_continuous/ObsrvBack.h"
-#include "active_sensing_continuous/ReqObsrv.h"
-#include "active_sensing_continuous/UpdateInfo.h"
-#include "active_sensing_continuous/CT.h"
 #include "active_sensing_continuous/action_message.h"
-#include "/home/user/ros_master_new/src/active_sensing-master/lib/random/include/rng.h"
+#include "/var/lib/jenkins/remote_ws/active_sensing/lib/random/include/rng.h"
 
 unsigned int sensing_action_global;
 double observation_global;
