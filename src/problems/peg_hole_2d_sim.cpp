@@ -29,7 +29,7 @@ void simulate(Simulator &simulator, Model &model, unsigned int num_trials, unsig
     {
         // Run simulation.
         init_state = model.sampleInitState();
-	    std::cout<<"initstate is "<<init_state<<cout::endl;
+	    std::cout<<"initstate is "<<init_state<<std::endl;
         simulator.simulate(init_state, max_steps, display);
 
         // Print to screen.
