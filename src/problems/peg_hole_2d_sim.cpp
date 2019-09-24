@@ -29,6 +29,7 @@ void simulate(Simulator &simulator, Model &model, unsigned int num_trials, unsig
     {
         // Run simulation.
         init_state = model.sampleInitState();
+	cout<<"initstate is "<<init_state<<endl;
         simulator.simulate(init_state, max_steps, display);
 
         // Print to screen.
@@ -39,10 +40,6 @@ void simulate(Simulator &simulator, Model &model, unsigned int num_trials, unsig
         // Print to file.
         file << "trial " << i << ", reward = " << simulator.getCumulativeReward();
         file << ", sensing time = " << simulator.getAverageActiveSensingTime();
-        file << ", observation time = " << simulator.getAvgObservationTime();
-        file << ", update belief time = " << simulator.getAvgUpdatebeliefTime();
-        file << ", task action time = " << simulator.getAvgTaskactionTime();
-        file << ", predict belief time = " << simulator.getAvgPredictbeliefTime();
         file << ", goal reached = " << model.isGoal(simulator.getStates().back()) << std::endl;
 
         if (model.isGoal(simulator.getStates().back()))

@@ -109,7 +109,12 @@ public:
      * @return The time the active sensing took (s).
      */
     double getAverageActiveSensingTime();
+    double getAvgObservationTime();
+    double getAvgUpdatebeliefTime();
+    double getAvgTotalUpdatebeliefTime();
     double getAvgTaskactionTime();
+    double getAvgPredictbeliefTime();
+    double getAvgTotalPredictbeliefTime();
 
 
     //void pulishReqobsrv(ROS::NodeHandle nodehandle);
