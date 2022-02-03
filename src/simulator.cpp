@@ -5,7 +5,7 @@
 #include <visualization_msgs/MarkerArray.h>
 #include "simulator.h"
 #include "active_sensing_continuous/action_message.h"
-#include "/var/lib/jenkins/remote_ws/src/active_sensing/lib/random/include/rng.h"
+#include "rng.h"
 
 unsigned int sensing_action_global;
 double observation_global;
