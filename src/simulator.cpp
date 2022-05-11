@@ -1,6 +1,7 @@
-//
+ //
 // Created by tipakorng on 3/3/16.
 //
+//Modified by Lexi Scott in 2022
 
 #include <visualization_msgs/MarkerArray.h>
 #include "simulator.h"
@@ -147,6 +148,12 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
         planner_.normalizeBelief();
         ROS_INFO("communication round is %d",communication_count);
 	    ROS_INFO("n is %d",n);
+        //This is a check to make sure it's still communicating with roscore'
+        if(!ros::master::check()){
+            ROS_ERROR("Failed to access roscore");
+            ros::Duration(2).sleep();
+
+        }
         // If sensing is allowed in this step.
         if (n % (sensing_interval_ + 1) == 0)
         {
