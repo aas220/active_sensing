@@ -151,7 +151,9 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
         //This is a check to make sure it's still communicating with roscore'
         if(!ros::master::check()){
             ROS_ERROR("Failed to access roscore");
-            ros::Duration(2).sleep();
+            ros::Duration(5).sleep();
+            system("cd ..");
+            system("sudo ./runlocal.sh");
 
         }
         // If sensing is allowed in this step.
@@ -208,6 +210,8 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             else
             {
               ROS_ERROR("Failed to call service");
+              ros::Duration(10).sleep();
+
             }
             if(Break_Loop==1)
             {
