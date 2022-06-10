@@ -184,6 +184,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             int Break_Loop = 0;
             if(client.call(srv))
             {
+                ROS_INFO("found a server");
                 switch(srv.response.type1)
                 {
                     case 2:
@@ -210,7 +211,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             else
             {
               ROS_ERROR("Failed to call service");
-              ros::Duration(10).sleep();
+              ros::Duration(1).sleep();
 
             }
             if(Break_Loop==1)
