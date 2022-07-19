@@ -172,6 +172,7 @@ void Simulator::simulate(const Eigen::VectorXd &init_state, unsigned int num_ste
             srv.request.y = 0;
             srv.request.z = 0;
             srv.request.type = 1;
+	    srv.request.source =1;
 
             /*
                 code below pub observation request to local
