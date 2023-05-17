@@ -1,4 +1,5 @@
 //
+//
 // Created by tipakorng on 7/26/17.
 //
 
@@ -30,7 +31,7 @@ void simulate(Simulator &simulator, Model &model, unsigned int num_trials, unsig
         // Run simulation.
         init_state = model.sampleInitState();
 	    std::cout<<"initstate is "<<init_state<<std::endl;
-        simulator.simulate(init_state, max_steps, display);
+        simulator.simulate(init_state, max_steps, display, i);
 
         // Print to screen.
         std::cout << "trial " << i << ", reward = " << simulator.getCumulativeReward();
@@ -84,8 +85,8 @@ int main(int argc, char** argv)
     std::string output_path = argv[2] + file_name + ".txt";
 
     // Initialize ROS node.
-    ros::init(argc, argv, "peg_hole_2d_sim");
-    ros::NodeHandle node_handle("active_sensing_remote");
+    ros::init(argc, argv, "peg_hole_2d_sim_recovery");
+    ros::NodeHandle node_handle("active_sensing_remote_recovery");
 
     // Initialize the model.
     double peg_width = root["model"]["peg_width"].as<double>();
@@ -124,16 +125,16 @@ int main(int argc, char** argv)
     unsigned int num_observation_samples = root["active_sensing"]["num_observation_samples"].as<uint>();
     unsigned int num_nearest_neighbors = root["active_sensing"]["num_nearest_neighbors"].as<uint>();
     unsigned int num_cores = root["active_sensing"]["num_cores"].as<uint>();
-    RandomActiveSensing random_action_sensing(model, state_space_planner, particle_filter, horizon, discount);
-    ActiveSensing state_entropy_active_sensing(model, state_space_planner, particle_filter, horizon, discount,
-                                               num_observation_samples, num_nearest_neighbors, num_cores);
+  //  RandomActiveSensing random_action_sensing(model, state_space_planner, particle_filter, horizon, discount);
+    //ActiveSensing state_entropy_active_sensing(model, state_space_planner, particle_filter, horizon, discount,
+                                       //        num_observation_samples, num_nearest_neighbors, num_cores);
     ActionEntropyActiveSensing action_entropy_active_sensing(model, state_space_planner, particle_filter, horizon,
                                                              discount, num_observation_samples, num_nearest_neighbors,
                                                              num_cores);
 
     // Initialize belief space planners.
-    BeliefSpacePlanner random_planner(state_space_planner, random_action_sensing, particle_filter);
-    BeliefSpacePlanner state_entropy_planner(state_space_planner, state_entropy_active_sensing, particle_filter);
+  //  BeliefSpacePlanner random_planner(state_space_planner, random_action_sensing, particle_filter);
+    //BeliefSpacePlanner state_entropy_planner(state_space_planner, state_entropy_active_sensing, particle_filter);
     BeliefSpacePlanner action_entropy_planner(state_space_planner, action_entropy_active_sensing, particle_filter);
 
     // Initialize simulators.
@@ -141,8 +142,8 @@ int main(int argc, char** argv)
     unsigned int max_steps = root["simulator"]["max_steps"].as<uint>();
     unsigned int sensing_interval = root["simulator"]["sensing_intervals"].as<uint>();
     unsigned int verbosity = root["simulator"]["verbosity"].as<uint>();
-    Simulator random_simulator(model, random_planner, &node_handle, sensing_interval);
-    Simulator state_entropy_simulator(model, state_entropy_planner, &node_handle, sensing_interval);
+  //  Simulator random_simulator(model, random_planner, &node_handle, sensing_interval);
+    //Simulator state_entropy_simulator(model, state_entropy_planner, &node_handle, sensing_interval);
     Simulator action_entropy_simulator(model, action_entropy_planner, &node_handle, sensing_interval);
 
     // Open output file and write simulation configuration.
@@ -179,7 +180,7 @@ int main(int argc, char** argv)
     file << "sensing_interval = " << sensing_interval << std::endl;
     file << "==========" << std::endl;
     file << std::endl;
-
+    /* 
     // Run random active sensing simulation.
     std::cout << "Running random active sensing simulations..." << std::endl;
     file << "Random Active Sensing Simulations" << std::endl;
@@ -193,7 +194,7 @@ int main(int argc, char** argv)
     simulate(state_entropy_simulator, model, num_trials, max_steps, file, verbosity);
     std::cout << "Finished state-entropy active sensing simulations." << std::endl << std::endl;
     file << std::endl;
-
+    */
     // Run action-entropy active sensing simulation.
     std::cout << "Running action-entropy active sensing simulations..." << std::endl;
     file << "Action-Entropy Active Sensing Simulations" << std::endl;

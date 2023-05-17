@@ -50,6 +50,7 @@ add_message_files(
 add_service_files(
   FILES
   action_message.srv
+  action_message2.srv
 )
 
 generate_messages(

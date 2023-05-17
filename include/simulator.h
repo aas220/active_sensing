@@ -11,6 +11,7 @@
 #include <tf/transform_broadcaster.h>
 #include "model.h"
 #include "planner.h"
+#include "active_sensing_continuous/action_message2.h"
 //int globalcheckflag=0;
 
 
@@ -66,7 +67,7 @@ public:
      *
      * @param num_steps The number of steps the simulator will run.
      */
-    void simulate(const Eigen::VectorXd &init_state, unsigned int num_steps, unsigned int verbosity=0);
+    void simulate(const Eigen::VectorXd &init_state, unsigned int num_steps, unsigned int verbosity=0, unsigned int round = 0);
 
     /**
      * \brief Return the state trajectory.
@@ -118,6 +119,9 @@ public:
 
 
     //void pulishReqobsrv(ROS::NodeHandle nodehandle);
+        
+    bool localmachine(active_sensing_continuous::action_message2::Request& req,
+        active_sensing_continuous::action_message2::Response& res);
 
     void publishState();
 

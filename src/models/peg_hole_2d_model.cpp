@@ -235,6 +235,7 @@ if(globalcheckflag==1)
     }
 
     return next_state;
+    
 }
 
 Eigen::VectorXd PegHole2d::sampleObservation(const Eigen::VectorXd &state, unsigned int sensing_action) const
